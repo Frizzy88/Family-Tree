@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-Type" content="Text/html; charset=iso-8859-1" />
+<link href="oxygen.css" rel="stylesheet" type="text/css" />
+<script src="tree_event_indi.js"></script>
+</head>
+<body>
+<table border=0 width=100% cellspacing=0 cellpadding=0><tr><td width=10%><a href="index.htm" target="_top">Retour à la page d'accueil</a></td><td align=center><h3>Recherche</h3></td></tr></table>
+<center>
+<form method="get" action="rec_res.htm" target="resultat">
+<table cellspacing="0" cellpadding="0"><tr><td>
+Mot clé a trouver : <div id="div_occu"><input name="keyword" id="keyword" type="text" /></div><br />
+</td><td>&nbsp;
+</td><td>&nbsp;
+</td><td>
+<input name="name" id="name" type="checkbox" checked="true" OnClick="show_list()" />Nom<br />
+<input name="firstname" id="firstname" type="checkbox" checked="true" OnClick="show_list()" />Prénom<br />
+</td><td>&nbsp;
+</td><td>
+<input name="place" id="place" type="checkbox" checked="true" OnClick="show_list()" />Lieu<br />
+<input name="source" id="source" type="checkbox" checked="true" OnClick="show_list()" />Source<br />
+<input name="occu" id="occu" type="checkbox" checked="true" OnClick="show_list()" />Profession<br />
+</td><td>&nbsp;
+</td><td>&nbsp;
+</td><td>
+<input name="full_word" type="checkbox" />Mot complet<br />
+<input name="case" type="checkbox" />Respecter la casse (accents/majuscules/minuscules)<br />
+</td></tr><tr><td colspan="9" align="center">
+<input name="OK" type="submit" value="Chercher" />
+</td></tr></table>
+</form>
+</center>
+</body>
+</html>
+
+<script language="JavaScript">
+function show_list()
+{
+	var sEventName;
+	
+	sKeyWordValue=document.getElementById("keyword").value;
+	
+	if(document.getElementById("occu").checked==true
+		&& document.getElementById("firstname").checked==false
+		&& document.getElementById("name").checked==false
+		&& document.getElementById("place").checked==false
+		&& document.getElementById("source").checked==false)
+	{
+		sInputListOccu="<datalist id='list_occu'>";
+		for(var i=0;i<lst_event_indi.length;i++)
+		{
+			if(lst_event_indi[i][3]==129)
+			{
+				sEventName=lst_event_indi[i][0];
+				if(sInputListOccu.indexOf("<option value=\""+sEventName+"\">")==-1)
+				{
+					sInputListOccu+="<option value=\""+sEventName+"\">";
+				}
+			}
+		}
+		sInputListOccu+="</datalist>";
+		sInputListOccu+="<input name='keyword' id='keyword' type='text' list='list_occu'>";
+		document.getElementById("div_occu").innerHTML=sInputListOccu;
+	}
+	else
+	{
+		document.getElementById("div_occu").innerHTML="<input name='keyword' id='keyword' type='text' />";
+	}
+	document.getElementById("keyword").value=sKeyWordValue;
+}
+</script>

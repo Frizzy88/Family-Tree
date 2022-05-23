@@ -1,0 +1,13 @@
+<html><frameset cols="250,*" frameborder="NO" framespacing="0"><noframe><script language="JavaScript"><!--
+window.location.href="lfv.htm"
+//--></script>You must use a browser that can display frames or be able to execute JavaScript to see this page.</NOFRAME><frame src="lzn.htm" name="zones" scrolling="yes" frameborder="NO" marginheight="0" marginwidth="0" framespacing="0"><frame src="lfv.htm" name="cities" frameborder="NO" marginheight="6" marginwidth="6" framespacing="0"></frameset><script language="JavaScript"><!--
+iPos=parent.location.href.indexOf("?");
+if(iPos>0)
+{
+	find_string=parent.location.href.substring(iPos+7);
+	adr="lzn.htm"+"#"+find_string;
+	zones.location.href=adr;
+	adr="lix"+find_string+".htm";
+	cities.location.href=adr;
+}
+//--></script></html>

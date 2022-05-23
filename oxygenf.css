@@ -1,0 +1,88 @@
+a:hover
+	{  color: #004900; background-color: #FFFF00; text-decoration: underline overline
+	}
+
+a 	{  color: #660000; text-decoration: underline
+	}
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif; color:#660000;
+	font-size: 12px;
+	font-weight: normal;
+	margin-left: 15px;
+	line-height: 20px;
+	background: #f5f3c5;
+	background-image: url(#F5F3C5);
+}
+
+h1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: large;
+	color: #660000;
+	font-variant: small-caps;
+}	
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: small; color: #660000; 
+	}
+h3 {
+	font-size: small
+	}
+h4 {  font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: medium; font-style: normal; font-weight: normal
+	}
+h6 {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: lighter;
+}
+	
+table {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-small;
+	}
+td {
+	vertical-align: top;
+	padding-left: 15px;
+	padding-right: 10px;
+}
+
+table.t1	{
+	border:0px; width=100%
+}
+
+td.c1	{
+	border-top:0px; width=3%; 
+	border-right:0px;
+	border-left:0px;
+	border-bottom:0px;
+}
+
+td.c2	{
+	border-top:0px; width=3%;
+	border-right:2px groove black;
+	border-left:0px solid black;
+	border-bottom:2px groove black;
+	
+}
+
+td.c3	{ 
+	border-top:0px; width=3%;
+	border-right:0px dashed black;
+	border-left:2px groove black;
+	border-bottom:2px groove black;
+}
+
+td.c4	{
+	border-top:0px; width=3%;
+	border-right: 1px groove black;
+	border-left: 0px solid black;
+	border-bottom: 0px groove black;
+}
+
+td.c5	{
+	border-top:0px; width=3%;
+	border-right:0px dashed black;
+	border-left:1px groove black;
+	border-bottom:0px groove black;
+}

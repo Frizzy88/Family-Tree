@@ -1,0 +1,51 @@
+<html>
+    <head>
+	<link href="oxygen.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="t1.css" />
+        <title>Oxy-Gen Family Tree</title>
+		<script src="tree_id.js"></script>
+		<script src="tree_name.js"></script>
+		<script src="tree_fname.js"></script>
+		<script src="tree_birth.js"></script>
+		<script src="tree_death.js"></script>
+		<script src="tree_places.js"></script>
+		<script src="tree_pict.js"></script>
+		<script src="tree_event_types.js"></script>
+		<script src="tree_event_asso.js"></script>
+		<script src="tree_event_indi.js"></script>		
+		<script src="tree_event_notes.js"></script>		
+		<script src="t1.js"></script>
+    </head>
+
+    <body>
+		<table border=0><tr><td valign=top style="width:1500px; height:500px;">
+		<div id=FamilyScroll style="overflow:scroll; width:1500px; height:500px; background:#bbbbbb">
+		<center>
+			<div class="tree" id="FamilyTree" style="width:20000px; height:4000px">
+			</div>
+			</center>
+		</div>
+		</td><td rowspan=3 valign>
+			<div id="IndList" style="overflow:scroll; width:300px; height:700px; ">
+			</div>
+		</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td valign=top>
+			<div id="IndInfo">
+			</div>
+		</td></tr>
+		</table>
+    </body>
+</html>
+
+<script>
+	var s=""+window.location;
+	LoadTree(document.getElementById("FamilyTree"), s.substr(s.indexOf("?")+1));
+	ulMaxX=0;
+	ulMaxY=0;
+	getCoord(document.getElementById("FamilyTree"));
+	document.getElementById('FamilyTree').style.width = ulMaxX+50;
+	document.getElementById('FamilyTree').style.height = ulMaxY+50;
+	document.getElementById('FamilyScroll').scrollLeft=(ulMaxX+50)/2-750;
+//	DisplayFamilyNames(document.getElementById("IndList"));
+</script>

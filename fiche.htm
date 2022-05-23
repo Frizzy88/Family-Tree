@@ -1,0 +1,1229 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<link href="oxygenf.css" rel="stylesheet" type="text/css" />
+<head>
+<meta http-equiv="content-Type" content="Text/html; charset="iso-8859-1" />
+<script src="tree_id.js"></script>
+<script src="tree_name.js"></script>
+<script src="tree_fname.js"></script>
+<script src="tree_birth.js"></script>
+<script src="tree_death.js"></script>
+<script src="tree_places.js"></script>
+<script src="tree_event_types.js"></script>
+<script src="lst_gedtag.js"></script>
+<script src="lst_event_indi_detail.js"></script>
+<script src="lst_sentences.js"></script>
+<script src="tree_pict.js"></script>
+</head>
+<body>
+
+<font color="#E84AE3" size="+1"><strong><div id=NAME></div></strong></font>
+    <script type="text/javascript">
+        //<!--
+                function change_tab(name)
+                {
+                        document.getElementById('tab_'+anc_tab).className = 'tab_0 tab';
+                        document.getElementById('tab_'+name).className = 'tab_1 tab';
+                        document.getElementById('contenu_tab_'+anc_tab).style.display = 'none';
+                        document.getElementById('contenu_tab_'+name).style.display = 'block';
+                        anc_tab = name;
+                }
+        //-->
+        </script>
+    <style type="text/css">
+        .tab
+        {
+                display:inline-block;
+                margin-left:3px;
+                margin-right:3px;
+                padding:3px;
+                border:1px solid black;
+                cursor:pointer;
+        }
+        .tab_0
+        {
+                background:#bbbbbb;
+                border-bottom:1px solid black;
+        }
+        .tab_1
+        {
+                background:#dddddd;
+                border-bottom:0px solid black;
+                padding-bottom:4px;
+        }
+        .contenu_tab
+        {
+                background-color:#dddddd;
+                border:1px solid black;
+                margin-top:-1px;
+                padding:5px;
+                display:none;
+        }
+        ul
+        {
+                margin-top:0px;
+                margin-bottom:0px;
+                margin-left:-10px
+        }
+        h1
+        {
+                margin:0px;
+                padding:0px;
+        }
+		#menu
+		{
+			list-style:none;
+		} 
+		#menu li
+		{
+			padding:3px;
+			margin:3px;
+			border:1px solid #888888;
+			background:#eeeeee;
+		} 
+</style>
+
+</head>
+<body>
+        <div class="systeme_tabs">
+        <div class="tabs">
+            <span class="tab_0 tab" id="tab_individual" onclick="javascript:change_tab('individual');">Individual</span>
+            <span class="tab_0 tab" id="tab_parental" onclick="javascript:change_tab('parental');">Parental</span>
+            <span class="tab_0 tab" id="tab_family" onclick="javascript:change_tab('family');">Family</span>
+            <span class="tab_0 tab" id="tab_ascend" onclick="javascript:change_tab('ascend');">Ancestry</span>
+            <span class="tab_0 tab" id="tab_descend" onclick="javascript:change_tab('descend');">Descendancy</span>
+        </div>
+        <div class="contenu_tabs">
+            <div class="contenu_tab" id="contenu_tab_individual">
+                <div id=BIRTH></div>
+				<div id=DEATH></div>
+				<div id=EVENTS></div>
+            </div>
+            <div class="contenu_tab" id="contenu_tab_parental">
+                <div id=FATHER></div>
+				<div id=MOTHER></div>
+				<div id=BROTHER_SISTER></div>
+            </div>
+            <div class="contenu_tab" id="contenu_tab_family">
+				<div id=FAMILIES></div>
+            </div>
+            <div class="contenu_tab" id="contenu_tab_ascend">
+                <div id=ANCESTRY_TREE></div>
+            </div>
+            <div class="contenu_tab" id="contenu_tab_descend">
+                <div id=DESCENT_TREE></div>
+            </div>
+        </div>
+    </div>
+	<script type="text/javascript">
+		var anc_tab = 'individual';
+		change_tab(anc_tab);
+	</script>
+		
+<script type="text/javascript">
+
+	var objEvent = { year:null, month:null, day:null, place:null, type:"", prefix:""};
+	var idInd;
+
+	idInd=GetURLParameter("IND");
+	if(idInd=="")
+	{
+		idInd=0;
+	}
+
+	document.getElementById("tab_individual").innerHTML=GetSentence("HTML_INDI");
+	document.getElementById("tab_parental").innerHTML=GetSentence("JS_PARENTAL");	
+	document.getElementById("tab_family").innerHTML=GetSentence("HTML_FAMILLES");
+	document.getElementById("tab_ascend").innerHTML=GetSentence("HTML_LASC");	
+	document.getElementById("tab_descend").innerHTML=GetSentence("HTML_LDSC");	
+	
+	idName=lst_family[idInd][0];
+	idFirstName=lst_family[idInd][1];
+
+	function DisplayEvent(sIdEvent, sGedTag, objEvent)
+	{
+		sEventBlock = "<table border=0 width=100% bgcolor=#888888><tr><td><ul id=\"menu\">";
+		sEventBlock+="<li>"
+		sEventBlock+= GetSentence(sGedTag) + " : ";
+		sEventBlock+= objEvent.day+"/"+(objEvent.month+1)+"/"+objEvent.year;
+		if(objEvent.place!="")
+		{
+			sEventBlock += " : "+objEvent.place;
+		}
+		sEventBlock+="</li>"
+		sEventBlock+= "</ul></table><br>";
+		document.getElementById(sIdEvent).innerHTML=sEventBlock;
+	}
+	
+	// ###############################################################################
+	// Individual
+	
+	// Name / First Name
+	sName="";
+	if(idName!=undefined)
+	{
+		sName=lst_names[idName];
+	}
+	if(idFirstName!=undefined)
+	{
+		if(idName!=undefined)
+		{
+			sName+=" ";
+		}
+		sName+=lst_first_names[idFirstName];
+	}
+    document.getElementById("NAME").innerHTML = sName;
+	// Events
+	sEventBlock="";
+	for(var iCptEvent= 0; iCptEvent < lst_event_indi_detail.length; iCptEvent++)
+	{
+		if(lst_event_indi_detail[iCptEvent][4]==idInd && lst_event_indi_detail[iCptEvent][6]==0)
+		{
+//			console.log(gedtag[lst_event_indi_detail[iCptEvent][5]] + " : " + lst_event_indi_detail[iCptEvent]);
+			if(lst_event_indi_detail[iCptEvent][12]!=undefined)
+			{
+			}
+			else
+			{
+				bEventTypeAlreadyDisplayed=false;
+				sEventBlock += "<table border=0 width=100% bgcolor=#888888><tr><td><ul id=\"menu\">";
+				sEventBlock += DisplayEventDetail(iCptEvent);
+				sEventBlock += AfficheSousEventDetail(idInd, lst_event_indi_detail[iCptEvent][3], 1, false);
+				sEventBlock += "</ul></table><br>";
+			}
+		}
+	}
+//	console.log(sEventBlock);
+	document.getElementById("EVENTS").innerHTML=sEventBlock;
+
+function AfficheSousEventDetail(idInd, iCptEventFather, iNiveau)
+{
+	var sEventSousBlock="";
+
+	for(var iCptSousEvent= 0; iCptSousEvent < lst_event_indi_detail.length; iCptSousEvent++)
+	{
+		if(lst_event_indi_detail[iCptSousEvent][4]==idInd && lst_event_indi_detail[iCptSousEvent][6]==iNiveau && lst_event_indi_detail[iCptSousEvent][9]==iCptEventFather)
+		{
+			if(bEventTypeAlreadyDisplayed==true)
+			{
+				if(gedtag[lst_event_indi_detail[iCptSousEvent][5]]=="TYPE")
+				{
+					continue;
+				}
+			}
+			sEventSousBlock+=DisplayEventDetail(iCptSousEvent);
+			sEventSousBlock+=AfficheSousEventDetail(idInd, lst_event_indi_detail[iCptSousEvent][3], iNiveau+1, bEventTypeAlreadyDisplayed);
+		}
+	}
+	if(sEventSousBlock!="")
+	{
+		sEventSousBlock="<ul id=\"menu\">"+sEventSousBlock+"</ul>"
+	}
+	return sEventSousBlock;
+}
+
+function GetTypeEvent(iCptEventFather, idInd)
+{
+	var sEventSousBlock="";
+
+	for(var iCptSousEvent= 0; iCptSousEvent < lst_event_indi_detail.length; iCptSousEvent++)
+	{
+		if(lst_event_indi_detail[iCptSousEvent][4]==idInd && lst_event_indi_detail[iCptSousEvent][9]==iCptEventFather)
+		{
+			if(gedtag[lst_event_indi_detail[iCptSousEvent][5]]=="TYPE")
+			{
+				return lst_event_indi_detail[iCptSousEvent][7];
+			}
+		}
+	}
+	return "";
+}
+
+function DisplayEventDetail(iCptEvent)
+{
+//	console.log(lst_event_indi_detail[iCptEvent]);
+	if(lst_event_types[lst_event_indi_detail[iCptEvent][5]]!=undefined)
+	{
+		if(gedtag[lst_event_indi_detail[iCptEvent][5]]=="TYPE")
+		{
+			sEventDetail = "<li>"+lst_event_types[lst_event_indi_detail[iCptEvent][5]] + " : " + lst_event_types[GetIdGedTag(lst_event_indi_detail[iCptEvent][7])];
+		}
+		else if(gedtag[lst_event_indi_detail[iCptEvent][5]]=="EVEN")
+		{
+			sTypeEvent=GetTypeEvent(lst_event_indi_detail[iCptEvent][3], lst_event_indi_detail[iCptEvent][4]);
+			if(sTypeEvent=="")
+			{
+				sEventDetail = "<li>"+lst_event_types[lst_event_indi_detail[iCptEvent][5]];
+			}
+			else
+			{
+				bEventTypeAlreadyDisplayed=true;
+				sEventDetail = "<li>"+sTypeEvent;
+			}		
+		}
+		else if(gedtag[lst_event_indi_detail[iCptEvent][5]]=="FILE")
+		{
+			if(bPictureInIndividualTab==true)
+			{
+				sEventDetail = "<li><img src='"+sPicturePrefix+lst_event_indi_detail[iCptEvent][7]+"'>";
+			}
+			else
+			{
+				sEventDetail = "<li><a href='"+sPicturePrefix+lst_event_indi_detail[iCptEvent][7]+"' target=_blank>"+lst_event_indi_detail[iCptEvent][7]+"</a>";
+			}
+		}
+		else
+		{
+			sEventDetail = "<li>"+lst_event_types[lst_event_indi_detail[iCptEvent][5]];
+			if(lst_event_indi_detail[iCptEvent][7]!=undefined && lst_event_indi_detail[iCptEvent][7][0]!="@")
+			{
+				if(gedtag[lst_event_indi_detail[iCptEvent][5]]=="TEXT" || gedtag[lst_event_indi_detail[iCptEvent][5]]=="NOTE")
+				{
+					sEventDetail += "<ul id=\"menu\"><li>" + lst_event_indi_detail[iCptEvent][7] + "</li></ul>";
+				}
+				else
+				{
+					sEventDetail += " : " + lst_event_indi_detail[iCptEvent][7];
+				}
+			}
+		}
+	}
+	else
+	{
+		sEventDetail = "<li>";
+		if(gedtag[lst_event_indi_detail[iCptEvent][5]]!=undefined)
+		{
+			sEventDetail += gedtag[lst_event_indi_detail[iCptEvent][5]] + " : ";
+		}
+		if(lst_event_indi_detail[iCptEvent][7]!=undefined && lst_event_indi_detail[iCptEvent][7][0]!="@")
+		{
+			sEventDetail += lst_event_indi_detail[iCptEvent][7];
+		}
+	}
+	sEventDetail += "</li>";
+	if(lst_event_indi_detail[iCptEvent][0]!=undefined || lst_event_indi_detail[iCptEvent][1]!=undefined || lst_event_indi_detail[iCptEvent][2]!=undefined)
+	{
+		sEventDetail += "<ul id=\"menu\"><li>"+GetSentence("HTML_DATE")+" : ";
+		if(lst_event_indi_detail[iCptEvent][11]!=undefined && lst_event_indi_detail[iCptEvent][11]=="AFT")
+		{
+			sEventDetail += GetSentence("OUTF_APRS") + " ";
+		}
+		else if(lst_event_indi_detail[iCptEvent][11]!=undefined && lst_event_indi_detail[iCptEvent][11]=="ABT")
+		{
+			sEventDetail += GetSentence("OUTF_AUTR") + " ";
+		}
+		else if(lst_event_indi_detail[iCptEvent][11]!=undefined && lst_event_indi_detail[iCptEvent][11]=="BEF")
+		{
+			sEventDetail += GetSentence("OUTF_AVNT") + " ";
+		}
+		if(lst_event_indi_detail[iCptEvent][11]!=undefined && lst_event_indi_detail[iCptEvent][11].substring(0,3)=="BET")
+		{
+			sEventDetail += format_date_between(lst_event_indi_detail[iCptEvent][11]) + "</li>";
+		}
+		else if(lst_event_indi_detail[iCptEvent][0]!=undefined && lst_event_indi_detail[iCptEvent][2]==undefined && lst_event_indi_detail[iCptEvent][1]==undefined)
+		{
+			sEventDetail += lst_event_indi_detail[iCptEvent][0] + "</li>";
+		}
+		else
+		{
+			if(lst_event_indi_detail[iCptEvent][2]!=undefined)
+			{
+				sEventDetail += lst_event_indi_detail[iCptEvent][2];
+			}
+			else
+			{
+				sEventDetail += "?";
+			}
+			if(lst_event_indi_detail[iCptEvent][1]!=undefined)
+			{
+				sEventDetail += "/" + (lst_event_indi_detail[iCptEvent][1]+1);
+			}
+			else
+			{
+				sEventDetail += "?";
+			}
+			if(lst_event_indi_detail[iCptEvent][0]!=undefined)
+			{
+				sEventDetail += "/" + lst_event_indi_detail[iCptEvent][0] + "</li>";
+			}
+			else
+			{
+				sEventDetail += "?</li>";
+			}
+		}
+	}
+	else
+	{
+		sEventDetail += "<ul id=\"menu\">";
+	}
+	if(lst_event_indi_detail[iCptEvent][10]!=undefined)
+	{
+		var bPlaceBegin=false;
+		sEventDetail += "<li>"+GetSentence("HTML_LELI")+" : ";
+		if(lst_places[lst_event_indi_detail[iCptEvent][10]][0]!=undefined)
+		{
+			sEventDetail += lst_places[lst_event_indi_detail[iCptEvent][10]][0];
+			bPlaceBegin=true;
+		}
+		if(lst_places[lst_event_indi_detail[iCptEvent][10]][1]!=undefined)
+		{
+			sEventDetail += ", " + lst_places[lst_event_indi_detail[iCptEvent][10]][1];
+		}
+		if(lst_places[lst_event_indi_detail[iCptEvent][10]][2]!=undefined)
+		{
+			sEventDetail += ", " + lst_places[lst_event_indi_detail[iCptEvent][10]][2];
+		}
+		if(lst_places[lst_event_indi_detail[iCptEvent][10]][3]!=undefined)
+		{
+			if(bPlaceBegin==true)
+			{
+				sEventDetail += ", ";
+			}
+			sEventDetail += lst_places[lst_event_indi_detail[iCptEvent][10]][3];
+			bPlaceBegin=true;
+		}
+		sEventDetail += "</li></ul>";
+	}
+	else
+	{
+		sEventDetail += "</ul>";
+	}
+		
+	return sEventDetail;
+}
+
+function format_date_between(sDate)
+{
+	sDate=sDate.replace("BET", GetSentence("OUTF_ENTR"));
+	sDate=sDate.replace("AND", GetSentence("OUTF_LBET"));
+	sDate=sDate.replaceAll("JAN", GetSentence("OUTF_MJAN"));
+	sDate=sDate.replaceAll("FEB", GetSentence("OUTF_MFEV"));
+	sDate=sDate.replaceAll("MAR", GetSentence("OUTF_MMAR"));
+	sDate=sDate.replaceAll("APR", GetSentence("OUTF_MAVR"));
+	sDate=sDate.replaceAll("MAY", GetSentence("OUTF_MMAI"));
+	sDate=sDate.replaceAll("JUN", GetSentence("OUTF_MJUN"));
+	sDate=sDate.replaceAll("JUI", GetSentence("OUTF_MJUL"));
+	sDate=sDate.replaceAll("AUG", GetSentence("OUTF_MAOU"));
+	sDate=sDate.replaceAll("SEP", GetSentence("OUTF_MSEP"));
+	sDate=sDate.replaceAll("OCT", GetSentence("OUTF_MOCT"));
+	sDate=sDate.replaceAll("NOV", GetSentence("OUTF_MNOV"));
+	sDate=sDate.replaceAll("DEC", GetSentence("OUTF_MDEC"));
+	return sDate;
+}
+	
+	// ###############################################################################
+
+	// Father
+	document.getElementById("FATHER").innerHTML = GetSentence("HTML_PERE") + " : ";
+	idFather=lst_family[idInd][2];
+	if(idFather === undefined)
+	{
+		document.getElementById("FATHER").innerHTML+="?";
+	}
+	else
+	{
+		document.getElementById("FATHER").innerHTML+=DisplayInd(idFather);
+	}
+	// Mother
+	document.getElementById("MOTHER").innerHTML = GetSentence("HTML_MERE") + " : ";
+	idMother=lst_family[idInd][3];
+	if(idMother === undefined)
+	{
+		document.getElementById("MOTHER").innerHTML+="?";
+	}
+	else
+	{
+		document.getElementById("MOTHER").innerHTML+=DisplayInd(idMother);
+	}
+	// Brothers/Sisters
+	if(idMother!=undefined || idFather!=undefined)
+	{
+		document.getElementById("BROTHER_SISTER").innerHTML = GetSentence("HTML_SISTER_BROTHER") + " :<br>";
+		var lstMapBrotherSister = [];
+		for(var i= 0; i < lst_family.length; i++)
+		{
+			if(lst_family[i][3]==idMother || lst_family[i][2]==idFather)
+			{
+				if(idInd!=i)
+				{
+					lstMapBrotherSister.push({annee: lst_birth[i][0], iDind: i});
+				}
+			}
+		}
+		if(lstMapBrotherSister.lenght!=0)
+		{
+			lstMapBrotherSister.sort(function(a,b){ return a.annee - b.annee;});
+			lstMapBrotherSister.forEach (function(iteration)
+			{
+				document.getElementById("BROTHER_SISTER").innerHTML += DisplayInd(iteration.iDind) + "<br>";
+			});
+		}
+	}
+
+	// ###############################################################################
+	// Families
+	document.getElementById("FAMILIES").innerHTML="";
+	var lstChildren=[];
+	if(lst_family[idInd]!=undefined && lst_family[idInd][4]!=undefined)
+	{
+		var lstPartner=lst_family[idInd][4].split(";");
+
+		for (var i = 0; i < lstPartner.length; i++)
+		{
+			document.getElementById("FAMILIES").innerHTML+=GetSentence("HTML_AVEC")+" "+DisplayInd(lstPartner[i]) + "<br>";
+			
+			for(var iCptEvent= 0; iCptEvent < lst_event_indi_detail.length; iCptEvent++)
+			{
+				if(lst_event_indi_detail[iCptEvent][4]==idInd && lst_event_indi_detail[iCptEvent][6]==0)
+				{
+					if(lst_event_indi_detail[iCptEvent][12]==lstPartner[i])
+					{
+						document.getElementById("FAMILIES").innerHTML += DisplayEventDetail(iCptEvent);
+						document.getElementById("FAMILIES").innerHTML += AfficheSousEventDetail(idInd, lst_event_indi_detail[iCptEvent][3], 1);
+					}
+				}
+			}
+
+			// Children
+			var lstMapChildren = [];
+			for(var iChildren= 0; iChildren < lst_family.length; iChildren++)
+			{
+				if((lst_family[iChildren][3]==idInd && lst_family[iChildren][2]==lstPartner[i]) || (lst_family[iChildren][2]==idInd && lst_family[iChildren][3]==lstPartner[i]))
+				{
+					lstChildren.push({annee: lst_birth[iChildren][0], iDind: iChildren});
+					lstMapChildren.push({annee: lst_birth[iChildren][0], iDind: iChildren});
+				}
+			}
+			if(lstMapChildren.lenght!=0)
+			{
+				document.getElementById("FAMILIES").innerHTML += "<li>" + GetSentence("HTML_ASC_CHILDREN");
+				lstMapChildren.sort(function(a,b){ return a.annee - b.annee;});
+				lstMapChildren.forEach (function(iteration)
+				{
+					document.getElementById("FAMILIES").innerHTML += "<ul id=\"menu\"><li>" + DisplayInd(iteration.iDind) + "</li></lu>";
+				});
+				document.getElementById("FAMILIES").innerHTML += "</li>";
+			}
+		}
+	}
+
+	// ###############################################################################
+	// Ancestry tree
+	
+	sFather=DisplayInd(idFather);
+	sMother=DisplayInd(idMother);
+	let idFatherFather;
+	let idFatherMother;
+	if(idFather!=undefined)
+	{
+		idFatherFather=lst_family[idFather][2];
+		idFatherMother=lst_family[idFather][3];
+		sFatherFather=DisplayInd(idFatherFather);
+		sFatherMother=DisplayInd(idFatherMother);
+	}
+	else
+	{
+		sFatherFather="";
+		sFatherMother="";
+	}
+	let idMotherFather;
+	let idMotherMother;
+	if(idMother!=undefined)
+	{
+		idMotherFather=lst_family[idMother][2];
+		idMotherMother=lst_family[idMother][3];
+		sMotherFather=DisplayInd(idMotherFather);
+		sMotherMother=DisplayInd(idMotherMother);
+	}
+	else
+	{
+		sMotherFather="";
+		sMotherMother="";
+	}
+	let idFatherFatherFather;
+	let idFatherFatherMother;
+	if(idFatherFather!=undefined)
+	{	
+		idFatherFatherFather=lst_family[idFatherFather][2];
+		idFatherFatherMother=lst_family[idFatherFather][3];
+		sFatherFatherFather=DisplayInd(idFatherFatherFather);
+		sFatherFatherMother=DisplayInd(idFatherFatherMother);
+	}
+	else
+	{
+		sFatherFatherFather="";
+		sFatherFatherMother="";
+	}
+	let idFatherMotherFather;
+	let idFatherMotherMother;
+	if(idFatherMother!=undefined)
+	{
+		idFatherMotherFather=lst_family[idFatherMother][2];
+		idFatherMotherMother=lst_family[idFatherMother][3];
+		sFatherMotherFather=DisplayInd(idFatherMotherFather);
+		sFatherMotherMother=DisplayInd(idFatherMotherMother);
+	}
+	else
+	{
+		sFatherMotherFather="";
+		sFatherMotherMother="";
+	}
+	let idMotherFatherFather;
+	let idMotherFatherMother;
+	if(idMotherFather!=undefined)
+	{
+		idMotherFatherFather=lst_family[idMotherFather][2];
+		idMotherFatherMother=lst_family[idMotherFather][3];
+		sMotherFatherFather=DisplayInd(idMotherFatherFather);
+		sMotherFatherMother=DisplayInd(idMotherFatherMother);
+	}
+	else
+	{
+		sMotherFatherFather="";
+		sMotherFatherMother="";
+	}
+	let idMotherMotherFather;
+	let idMotherMotherMother;
+	if(idMotherMother!=undefined)
+	{
+		idMotherMotherFather=lst_family[idMotherMother][2];
+		idMotherMotherMother=lst_family[idMotherMother][3];
+		sMotherMotherFather=DisplayInd(idMotherMotherFather);
+		sMotherMotherMother=DisplayInd(idMotherMotherMother);
+	}
+	else
+	{
+		sMotherMotherFather="";
+		sMotherMotherMother="";
+	}
+	
+	let idFatherFatherFatherFather;
+	let idFatherFatherFatherMother;
+	if(idFatherFatherFather!=undefined)
+	{	
+		idFatherFatherFatherFather=lst_family[idFatherFatherFather][2];
+		idFatherFatherFatherMother=lst_family[idFatherFatherFather][3];
+		sFatherFatherFatherFather=DisplayInd(idFatherFatherFatherFather);
+		sFatherFatherFatherMother=DisplayInd(idFatherFatherFatherMother);
+	}
+	else
+	{
+		sFatherFatherFatherFather="";
+		sFatherFatherFatherMother="";
+	}
+	let idFatherFatherMotherFather;
+	let idFatherFatherMotherMother;
+	if(idFatherFatherMother!=undefined)
+	{	
+		idFatherFatherMotherFather=lst_family[idFatherFatherMother][2];
+		idFatherFatherMotherMother=lst_family[idFatherFatherMother][3];
+		sFatherFatherMotherFather=DisplayInd(idFatherFatherMotherFather);
+		sFatherFatherMotherMother=DisplayInd(idFatherFatherMotherMother);
+	}
+	else
+	{
+		sFatherFatherMotherFather="";
+		sFatherFatherMotherMother="";
+	}
+	let idFatherMotherFatherFather;
+	let idFatherMotherFatherMother;
+	if(idFatherMotherFather!=undefined)
+	{
+		idFatherMotherFatherFather=lst_family[idFatherMotherFather][2];
+		idFatherMotherFatherMother=lst_family[idFatherMotherFather][3];
+		sFatherMotherFatherFather=DisplayInd(idFatherMotherFatherFather);
+		sFatherMotherFatherMother=DisplayInd(idFatherMotherFatherMother);
+	}
+	else
+	{
+		sFatherMotherFatherFather="";
+		sFatherMotherFatherMother="";
+	}
+	let idFatherMotherMotherFather;
+	let idFatherMotherMotherMother;
+	if(idFatherMotherMother!=undefined)
+	{
+		idFatherMotherMotherFather=lst_family[idFatherMotherMother][2];
+		idFatherMotherMotherMother=lst_family[idFatherMotherMother][3];
+		sFatherMotherMotherFather=DisplayInd(idFatherMotherMotherFather);
+		sFatherMotherMotherMother=DisplayInd(idFatherMotherMotherMother);
+	}
+	else
+	{
+		sFatherMotherMotherFather="";
+		sFatherMotherMotherMother="";
+	}
+	let idMotherFatherFatherFather;
+	let idMotherFatherFatherMother;
+	if(idMotherFatherFather!=undefined)
+	{
+		idMotherFatherFatherFather=lst_family[idMotherFatherFather][2];
+		idMotherFatherFatherMother=lst_family[idMotherFatherFather][3];
+		sMotherFatherFatherFather=DisplayInd(idMotherFatherFatherFather);
+		sMotherFatherFatherMother=DisplayInd(idMotherFatherFatherMother);
+	}
+	else
+	{
+		sMotherFatherFatherFather="";
+		sMotherFatherFatherMother="";
+	}
+	let idMotherFatherMotherFather;
+	let idMotherFatherMotherMother;
+	if(idMotherFatherMother!=undefined)
+	{
+		idMotherFatherMotherFather=lst_family[idMotherFatherMother][2];
+		idMotherFatherMotherMother=lst_family[idMotherFatherMother][3];
+		sMotherFatherMotherFather=DisplayInd(idMotherFatherMotherFather);
+		sMotherFatherMotherMother=DisplayInd(idMotherFatherMotherMother);
+	}
+	else
+	{
+		sMotherFatherMotherFather="";
+		sMotherFatherMotherMother="";
+	}
+	let idMotherMotherFatherFather;
+	let idMotherMotherFatherMother;
+	if(idMotherMotherFather!=undefined)
+	{
+		idMotherMotherFatherFather=lst_family[idMotherMotherFather][2];
+		idMotherMotherFatherMother=lst_family[idMotherMotherFather][3];
+		sMotherMotherFatherFather=DisplayInd(idMotherMotherFatherFather);
+		sMotherMotherFatherMother=DisplayInd(idMotherMotherFatherMother);
+	}
+	else
+	{
+		sMotherMotherFatherFather="";
+		sMotherMotherFatherMother="";
+	}
+	let idMotherMotherMotherFather;
+	let idMotherMotherMotherMother;
+	if(idMotherMotherMother!=undefined)
+	{
+		idMotherMotherMotherFather=lst_family[idMotherMotherMother][2];
+		idMotherMotherMotherMother=lst_family[idMotherMotherMother][3];
+		sMotherMotherMotherFather=DisplayInd(idMotherMotherMotherFather);
+		sMotherMotherMotherMother=DisplayInd(idMotherMotherMotherMother);
+	}
+	else
+	{
+		sMotherMotherMotherFather="";
+		sMotherMotherMotherMother="";
+	}
+	
+	sAncestryTab="<table width=100% border=0 cellspacing=0 cellpadding=5>";
+	sAncestryTab+="<tr><td></td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td>";
+	sAncestryTab+="<td></td><td><td><td><td><td><td><td><td><td><td><td><td><td><td><td></tr>";
+	sAncestryTab+="<tr><td colspan=2 align=center width=6%>"+sFatherFatherFatherFather+"</td><td colspan=2 align=center width=6%>"+sFatherFatherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sFatherFatherMotherFather+"</td><td colspan=2 align=center width=6%>"+sFatherFatherMotherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sFatherMotherFatherFather+"</td><td colspan=2 align=center width=6%>"+sFatherMotherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sFatherMotherMotherFather+"</td><td colspan=2 align=center width=6%>"+sFatherMotherMotherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sMotherFatherFatherFather+"</td><td colspan=2 align=center width=6%>"+sMotherFatherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sMotherFatherMotherFather+"</td><td colspan=2 align=center width=6%>"+sMotherFatherMotherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sMotherMotherFatherFather+"</td><td colspan=2 align=center width=6%>"+sMotherMotherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=2 align=center width=6%>"+sMotherMotherMotherFather+"</td><td colspan=2 align=center width=6%>"+sMotherMotherMotherMother+"</td></tr>";
+
+	if(sFatherFatherFatherFather=="" && sFatherFatherFatherMother=="")
+	{
+		sAncestryTab+="<tr><td>&nbsp;</td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<tr><td>&nbsp;</td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sFatherFatherMotherFather=="" && sFatherFatherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sFatherMotherFatherFather=="" && sFatherMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sFatherMotherMotherFather=="" && sFatherMotherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherFatherFatherFather=="" && sMotherFatherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherFatherMotherFather=="" && sMotherFatherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherMotherFatherFather=="" && sMotherMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherMotherMotherFather=="" && sMotherMotherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=2></td><td></td><td></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2></td><td style=\"border-left: solid;border-bottom: solid\"></td><td style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	
+	if(sFatherFatherFatherFather=="" && sFatherFatherFatherMother=="")
+	{
+		sAncestryTab+="<tr><td colspan=2>&nbsp;</td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<tr><td colspan=2>&nbsp;</td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sFatherFatherMotherFather=="" && sFatherFatherMotherMother=="")
+	{
+		sAncestryTab+="<td><td></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td><td></td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sFatherMotherFatherFather=="" && sFatherMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sFatherMotherMotherFather=="" && sFatherMotherMotherMother=="")
+	{
+		sAncestryTab+="</td><td><td></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td><td></td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherFatherFatherFather=="" && sMotherFatherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherFatherMotherFather=="" && sMotherFatherMotherMother=="")
+	{
+		sAncestryTab+="<td><td></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td><td></td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherMotherFatherFather=="" && sMotherMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2>&nbsp;</td><td colspan=2 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherMotherMotherFather=="" && sMotherMotherMotherMother=="")
+	{
+		sAncestryTab+="</td><td><td></td><td colspan=2></td></tr>";
+	}
+	else
+	{
+		sAncestryTab+="<td><td></td><td colspan=2 style=\"border-left: solid\"></td></tr>";
+	}
+	
+	sAncestryTab+="<tr><td colspan=4 align=center>"+sFatherFatherFather+"</td><td colspan=4 align=center>"+sFatherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=4 align=center>"+sFatherMotherFather+"</td><td colspan=4 align=center>"+sFatherMotherMother+"</td>";
+	sAncestryTab+="<td colspan=4 align=center>"+sMotherFatherFather+"</td><td colspan=4 align=center>"+sMotherFatherMother+"</td>";
+	sAncestryTab+="<td colspan=4 align=center>"+sMotherMotherFather+"</td><td colspan=4 align=center>"+sMotherMotherMother+"</td></tr>";
+
+	if(sFatherFatherFather=="" && sFatherFatherMother=="")
+	{
+		sAncestryTab+="<tr><td colspan=2>&nbsp;</td><td colspan=2></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<tr><td colspan=2>&nbsp;</td><td colspan=2 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=2 style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sFatherMotherFather=="" && sFatherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=2 style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherFatherFather=="" && sMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2></td><td colspan=2></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=2 style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherMotherFather=="" && sMotherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2></td><td colspan=2></td></tr>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=4></td><td colspan=2 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=2 style=\"border-right: solid;border-bottom: solid\"></td></tr>";
+	}
+	if(sFatherFatherFather=="" && sFatherFatherMother=="")
+	{
+		sAncestryTab+="<tr><td colspan=4>&nbsp;</td><td colspan=4></td>";
+	}
+	else
+	{
+		sAncestryTab+="<tr><td colspan=4>&nbsp;</td><td colspan=4 style=\"border-left: solid\"></td>";
+	}
+	if(sFatherMotherFather=="" && sFatherMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=2><td colspan=2></td><td colspan=4></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2><td colspan=2></td><td colspan=4 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherFatherFather=="" && sMotherFatherMother=="")
+	{
+		sAncestryTab+="<td colspan=4>&nbsp;</td colspan=2><td colspan=4></td>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=4>&nbsp;</td><td colspan=4 style=\"border-left: solid\"></td>";
+	}
+	if(sMotherMotherFather=="" && sMotherMotherMother=="")
+	{
+		sAncestryTab+="</td><td colspan=2><td colspan=2></td><td colspan=4></td></tr>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=2><td colspan=2></td><td colspan=4 style=\"border-left: solid\"></td></tr>";
+	}
+
+	sAncestryTab+="<tr><td align=center colspan=8>"+sFatherFather+"</td><td align=center colspan=8>"+sFatherMother+"</td>";
+	sAncestryTab+="<td align=center colspan=8>"+sMotherFather+"</td><td align=center colspan=8>"+sMotherMother+"</td></tr>";
+
+	if(sFatherFather=="" && sFatherMother=="")
+	{
+		sAncestryTab+="<tr><td colspan=4>&nbsp;</td><td colspan=4></td><td colspan=4></td>";
+	}
+	else
+	{
+		sAncestryTab+="<tr><td colspan=4>&nbsp;</td><td colspan=4 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=4 style=\"border-right: solid;border-bottom: solid\"></td>";
+	}
+	if(sMotherFather=="" && sMotherMother=="")
+	{
+		sAncestryTab+="<td colspan=8></td><td colspan=4></td><td colspan=4></td></tr>";
+	}
+	else
+	{
+		sAncestryTab+="<td colspan=8></td><td colspan=4 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=4 style=\"border-right: solid;border-bottom: solid\"></td></tr>";
+	}
+	if(sFatherFather=="" && sFatherMother=="")
+	{
+		sAncestryTab+="<tr><td colspan=8>&nbsp;</td><td colspan=8></td>"
+	}
+	else
+	{
+		sAncestryTab+="<tr><td colspan=8>&nbsp;</td><td colspan=8 style=\"border-left: solid\"></td>"
+	}
+	if(sMotherFather=="" && sMotherMother=="")
+	{
+		sAncestryTab+="<td><td colspan=7></td><td colspan=8></td></tr>";
+	}
+	else
+	{
+		sAncestryTab+="<td><td colspan=7></td><td colspan=8 style=\"border-left: solid\"></td></tr>";
+	}
+	
+	sAncestryTab+="<tr><td colspan=16 align=center>"+sFather+"</td><td colspan=16 align=center>"+sMother+"</td></tr>";
+
+	if(sFather!="" && sMother!="")
+	{
+		sAncestryTab+="<tr><td colspan=8>&nbsp;</td><td colspan=8 style=\"border-left: solid;border-bottom: solid\"></td><td colspan=8 style=\"border-right: solid;border-bottom: solid\"></td></tr>";
+		sAncestryTab+="<tr><td colspan=16>&nbsp;</td><td colspan=8 style=\"border-left: solid\"></td></tr>";
+	}
+
+	sAncestryTab+="<tr><td colspan=32 align=center>"+DisplayInd(idInd)+"</td></tr>";
+	sAncestryTab+="</table>";
+	
+	document.getElementById("ANCESTRY_TREE").innerHTML=sAncestryTab;
+
+	// ###############################################################################
+	// Descendency tree
+
+	sDescentTab="<table width=100% cellspacing=0 cellpadding=5 border=0>";
+	sDescentTab += "<tr>";
+	sortTab(lstChildren);
+	for(var iChildren= 0; iChildren < lstChildren.length*2; iChildren++)
+	{
+		sDescentTab+="<td width="+100/(lstChildren.length*2)+"%></td>";
+	}
+	sDescentTab += "</tr>";
+	sDescentTab+="<tr><td colspan="+2*lstChildren.length+" align=center>"+DisplayInd(idInd)+"</td></tr>";
+
+	sDescentTab+="<tr><td colspan="+lstChildren.length+">&nbsp;</td><td style=\"border-left: solid\"></td></tr>";
+	
+	// Children
+	sDescentTab += "<tr>";
+	for(var iChildren= 0; iChildren < lstChildren.length; iChildren++)
+	{
+		if(lstChildren.length>1)
+		{
+			if(iChildren==0)
+			{
+				sDescentTab += "<td>&nbsp;</td><td style=\"border-left:solid;border-top:solid\"></td>";
+			}
+			else if(iChildren==lstChildren.length-1)
+			{
+				sDescentTab += "<td style=\"border-top:solid\"></td><td style=\"border-left:solid\"></td>";
+			}
+			else
+			{
+				sDescentTab += "<td style=\"border-top:solid\"></td><td style=\"border-left:solid;border-top:solid\"></td>";
+			}
+		}
+	}	
+	sDescentTab += "</tr><tr>";
+	for(var iChildren= 0; iChildren < lstChildren.length; iChildren++)
+	{
+		sDescentTab += "<td align=center colspan=2>" + DisplayInd(lstChildren[iChildren]) + "</td>";
+	}	
+	sDescentTab += "</tr>";
+
+	// Grandchildren
+	sDescentTab += "<tr>";
+	for(var iChildren= 0; iChildren < lstChildren.length; iChildren++)
+	{
+		sDescentTabGrandchildren="";
+		iNbGrandchildren=0;
+		var lstGrandChildren=[];
+		for(var i= 0; i < lst_family.length; i++)
+		{
+			if(lst_family[i][3]==lstChildren[iChildren] || lst_family[i][2]==lstChildren[iChildren])
+			{
+				lstGrandChildren.push({annee: lst_birth[i][0], iDind: i});
+				iNbGrandchildren++;
+			}
+		}
+		if(iNbGrandchildren>0)
+		{
+			sortTab(lstGrandChildren);
+			for(var i= 0; i < iNbGrandchildren; i++)
+			{
+				sDescentTabGrandchildren += "<td colspan=2 align=center>" + DisplayInd(lstGrandChildren[i]) + "</td>";
+			}
+			sDescentTab += "<td colspan=2 valign=top><table border=0 width=100% cellspacing=0>";
+			sDescentTab += "<tr><td colspan="+iNbGrandchildren+">&nbsp;</td><td style=\"border-left:solid\"></tr><tr>";
+			for(iGrandchildren=0;iGrandchildren<iNbGrandchildren;iGrandchildren++)
+			{
+				if(iNbGrandchildren>1)
+				{
+					if(iGrandchildren==0)
+					{
+						sDescentTab += "<td>&nbsp;</td><td style=\"border-left:solid;border-top:solid\"></td>";
+					}
+					else if(iGrandchildren==iNbGrandchildren-1)
+					{
+						sDescentTab += "<td style=\"border-top:solid\"></td><td style=\"border-left:solid\"></td>";
+					}
+					else
+					{
+						sDescentTab += "<td style=\"border-top:solid\"></td><td style=\"border-left:solid;border-top:solid\"></td>";
+					}
+				}
+			}
+			sDescentTab += "</tr><tr>";
+			sDescentTab += sDescentTabGrandchildren ;
+			sDescentTab += "</tr><tr>";
+			for(var iGrandchildren= 0; iGrandchildren < iNbGrandchildren*2; iGrandchildren++)
+			{
+				sDescentTab+="<td width="+100/(iNbGrandchildren*2)+"%></td>";
+			}
+			sDescentTab += "</tr></table></td>";
+		}
+		else
+		{
+			sDescentTab += "<td colspan=2></td>";
+		}
+	}
+	sDescentTab += "</tr>";
+	
+	sDescentTab+="</table>";
+	
+	document.getElementById("DESCENT_TREE").innerHTML=sDescentTab;
+	
+function sortTab(lst)
+{
+	lst.sort(function(a,b){ return a.annee - b.annee;});
+	iCpt= 0;
+	lst.forEach (function(iteration)
+	{
+		lst[iCpt] = iteration.iDind;
+		iCpt++;
+	});
+}
+	
+function GetEventInfo(IdEventInd, objEventInfo, lst_Event)
+{
+	objEventInfo.year=null;
+
+	if(lst_Event[IdEventInd]!=undefined)
+	{
+		objEventInfo.year=lst_Event[IdEventInd][0];
+		objEventInfo.month=lst_Event[IdEventInd][1];
+		objEventInfo.day=lst_Event[IdEventInd][2];
+		if(lst_Event[IdEventInd][3]==undefined)
+		{
+			objEventInfo.prefix="";
+		}
+		else
+		{
+			objEventInfo.prefix=lst_Event[IdEventInd][3];
+		}
+		if(lst_Event[IdEventInd][4]==undefined)
+		{
+			objEventInfo.place="";
+		}
+		else
+		{
+			objEventInfo.place=lst_places[lst_Event[IdEventInd][4]][0];
+			if(lst_places[lst_Event[IdEventInd][4]][1]!=undefined)
+			{
+				objEventInfo.place += ", " + lst_places[lst_Event[IdEventInd][4]][1];
+			}
+			if(lst_places[lst_Event[IdEventInd][4]][2]!=undefined)
+			{
+				objEventInfo.place += ", " + lst_places[lst_Event[IdEventInd][4]][2];
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+function DisplayInd(IdIndDisp)
+{
+	var objEventInd = { year:null, month:null, day:null, place:null, type:""};
+
+	if(IdIndDisp==undefined)
+	{
+		return "";
+	}
+	sResultSates="";
+	sName="";
+	if(lst_family[IdIndDisp][0]!=undefined)
+	{
+		sName=lst_names[lst_family[IdIndDisp][0]];
+	}
+	if(lst_family[IdIndDisp][1]!=undefined)
+	{
+		if(lst_family[IdIndDisp][0]!=undefined)
+		{
+			sName+=" ";
+		}
+		sName+=lst_first_names[lst_family[IdIndDisp][1]];
+	}
+	if(GetEventInfo(IdIndDisp, objEventInd, lst_birth)==true)
+	{
+		if(objEventInd.year!=undefined)
+		{
+			sResultSates+= " " + objEventInd.prefix + objEventInd.year;
+		}
+		else
+		{
+			sResultSates+=" ?";
+		}
+	}
+	else
+	{
+			sResultSates+=" ?";
+	}
+	if(GetEventInfo(IdIndDisp, objEventInd, lst_death)==true)
+	{
+		if(objEventInd.year!=undefined)
+		{
+			sResultSates+="/" + objEventInd.prefix + objEventInd.year;
+		}
+	}
+	if(sResultSates==" ?")
+	{
+		sResultSates="";
+	}
+	return "<a href='fiche.htm?IND="+IdIndDisp+"'>"+sName+sResultSates+"</a>";
+}
+
+function GetURLParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) 
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) 
+        {
+            return sParameterName[1];
+        }
+    }
+	return "";
+}
+
+/*
+	birthday=new Date(objEventBirth.year,objEventBirth.month-1,objEventBirth.day);
+function GetAge(objEventBirth = { year:null, month:null, day:null, place:null, type:""}, objEventDeath = { year:null, month:null, day:null, place:null, type:""})
+{
+	deathday=new Date(objEventDeath.year,objEventDeath.month-1,objEventDeath.day);
+	var ageDifMs = deathday - birthday;
+	var ageDate = new Date(ageDifMs);
+	return Math.abs(ageDate.getUTCFullYear() - 1970);
+}*/
+
+function GetSentence(sSentenceCode)
+{
+	for(var i= 0; i < lst_sentences.length; i+=2)
+	{
+		if(lst_sentences[i]==sSentenceCode)
+		{
+			return lst_sentences[i+1];
+		}
+	}
+	return "?";
+}
+
+function GetIdGedTag(sGedTag)
+{
+	for(var i= 0; i < gedtag.length; i++)
+	{
+		if(gedtag[i]==sGedTag)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+</script>
+
+</html>

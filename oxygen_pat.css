@@ -1,0 +1,47 @@
+a:hover
+	{  color: #004900; background-color: #FFFF00; font-size:16px; text-decoration: underline overline
+	}
+
+a 	{  color: #660000; text-decoration: underline
+	}
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif; color:#660000;
+	font-size: 12px;
+	font-weight: normal;
+	line-height: 20px;
+	background: #f5f3c5;
+	background-image: url(#F5F3C5);
+}
+
+h1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: large;
+	color: #660000;
+	font-variant: small-caps;
+}	
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: small; color: #660000; 
+	}
+h3 {
+	font-size: small
+	}
+h4 {  font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: medium; font-style: normal; font-weight: normal
+	}
+h6 {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: lighter;
+}
+	
+table {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-small;
+	}
+td {
+	vertical-align: top;
+	padding-left: 5px;
+	padding-right: 5px;
+}

@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="iso-8859-1"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-Type" content="Text/html; charset=iso-8859-1" />
+<link href="oxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<script src="rcp.js"></script>
+<script src="tree_event_indi.js"></script>
+<script src="tree_event_notes.js"></script>
+<script src="tree_birth.js"></script>
+<script src="tree_death.js"></script>
+
+<script language="JavaScript">
+<!--
+	find_string=parent.resultat.location.href.substring(parent.resultat.location.href.indexOf("?")+1)
+
+	find_string=unescape(find_string)
+
+	arrayofStrings=find_string.split("&")
+	input_keyword=""
+	input_name=""
+	input_first_name=""
+	input_place=""
+	input_source=""
+	input_occu=""
+	input_full_word=""
+	input_case=""
+
+	for(var i=0;i<arrayofStrings.length;i++)
+	{
+		if(arrayofStrings[i].substring(0,7)=="keyword")
+		{
+			input_keyword=arrayofStrings[i].substring(8)
+		}
+		if(arrayofStrings[i].substring(0,4)=="name")
+		{
+			input_name=arrayofStrings[i].substring(5)
+		}
+		if(arrayofStrings[i].substring(0,9)=="firstname")
+		{
+			input_first_name=arrayofStrings[i].substring(10)
+		}
+		if(arrayofStrings[i].substring(0,5)=="place")
+		{
+			input_place=arrayofStrings[i].substring(6)
+		}
+		if(arrayofStrings[i].substring(0,6)=="source")
+		{
+			input_source=arrayofStrings[i].substring(7)
+		}
+		if(arrayofStrings[i].substring(0,4)=="occu")
+		{
+			input_occu=arrayofStrings[i].substring(5)
+		}
+		if(arrayofStrings[i].substring(0,9)=="full_word")
+		{
+			input_full_word=arrayofStrings[i].substring(10)
+		}
+		if(arrayofStrings[i].substring(0,4)=="case")
+		{
+			input_case=arrayofStrings[i].substring(5)
+		}
+	}
+	
+	if(input_keyword!="")
+	{
+		input_keyword=input_keyword.replace(/\+/g, " ");
+		document.write ("Résultat de la recherche sur le mot clé <b>")
+		document.write (input_keyword)
+		document.write ("</b>")
+	
+	}
+	if(input_case=="")
+	{
+		input_keyword=input_keyword.toUpperCase();
+		input_keyword=enleve_accents(input_keyword);
+	}
+	
+	document.write ("<p>")
+	if(input_keyword!="")
+	{
+		var nbResults;
+		
+		nbResults=0;
+		
+		if(input_name=="on")
+		{
+			if(input_case=="")
+			{
+				nbResults+=recherche(input_keyword, list_names_rec2, list_names_ref, list_names_link, list_individuals)
+			}
+			else
+			{
+				nbResults+=recherche(input_keyword, list_names_rec, list_names_ref, list_names_link, list_individuals)
+			}
+		}
+		if(input_first_name=="on")
+		{
+			if(input_case=="")
+			{
+				nbResults+=recherche(input_keyword, list_first_names_rec2, list_first_names_ref, list_first_names_link, list_individuals)
+			}
+			else
+			{
+				nbResults+=recherche(input_keyword, list_first_names_rec, list_first_names_ref, list_first_names_link, list_individuals)
+			}
+		}
+		if(input_place=="on")
+		{
+			if(input_case=="")
+			{
+				nbResults+=recherche(input_keyword, list_places_rec2, list_places_ref, list_places_link, list_places)
+			}
+			else
+			{
+				nbResults+=recherche(input_keyword, list_places_rec, list_places_ref, list_places_link, list_places)
+			}
+		}
+		if(input_source=="on")
+		{
+			nbResults+=recherche2(input_keyword, list_sources)
+		}
+		if(input_occu=="on")
+		{
+			nbResults+=recherche_event(input_keyword, 129)
+		}
+		
+		document.write("<br />")
+		document.write(nbResults)
+		document.write(" résultat(s)")
+	}
+	else
+	{
+		document.write ("Veuillez choisir un mot clé")
+	}
+	document.write ("</p>")
+	
+function GetBirthDate(IndId, objDate)
+{
+	objDate.year=null;
+
+	for(var i= 0; i < lst_birth.length; i++)
+	{
+		if(lst_birth[i][0]==IndId)
+		{
+			objDate.year=lst_birth[i][1];
+			objDate.month=lst_birth[i][2];
+			objDate.day=lst_birth[i][3];
+			objDate.place=lst_birth[i][4];
+			return true;;
+		}
+	}
+	return false;
+}
+
+function GetDeathDate(IndId, objDate)
+{
+	objDate.year=null;
+
+	for(var i= 0; i < lst_death.length; i++)
+	{
+		if(lst_death[i][0]==IndId)
+		{
+			objDate.year=lst_death[i][1];
+			objDate.month=lst_death[i][2];
+			objDate.day=lst_death[i][3];
+			objDate.place=lst_death[i][4];
+			return true;;
+		}
+	}
+	return false;
+}
+
+function GetDate(objDate)
+{
+	var sDate;
+
+	if(objDate.year!=null)
+	{
+		sDate=objDate.year;
+	}
+	else
+	{
+		sDate="?";
+	}
+	return sDate;
+}
+
+function donneNomPrenom(sIdIndi)
+{
+	for(iCpt=0;iCpt<list_individuals.length;iCpt++)
+	{
+		arrayofStrings=list_individuals[iCpt].split("|")
+		if(arrayofStrings[2]==sIdIndi)
+		{
+			document.write(arrayofStrings[3]);
+			break;
+		}
+	}
+	document.write("</b>");
+}
+
+function displaySource(sSource)
+{
+	iURL=sSource.toLowerCase().indexOf("http://");
+	if(iURL!=-1 && sSource.substr(iURL-2,1)=="=")
+	{
+		iURL=-1;
+	}
+	if(iURL!=-1)
+	{
+		document.write (sSource.substring(0, iURL));
+		iURLend=sSource.substring(iURL).indexOf(" ");
+		if(iURLend!=-1)
+		{
+			sURL=sSource.substr(iURL, iURLend);
+		}
+		else
+		{
+			sURL=sSource.substring(iURL);
+		}
+		document.write ("<a href='");
+		document.write (sURL);
+		document.write ("' target=_blank>");
+		document.write (sURL);
+		document.write ("</a>");
+		if(iURLend!=-1)
+		{
+			displaySource(sSource.substr(iURL+iURLend))
+		}
+	}
+	else
+	{
+		document.write (sSource);
+	}
+}
+
+function matchRuleShort(str, rule)
+{
+	if (typeof(str) != "undefined")
+	{
+		if(rule.indexOf("*")>=0)
+		{
+			return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+		}
+		else
+		{
+			return str.indexOf(rule)>=0;
+		}
+	}
+}
+
+function recherche_event(keyword, TypeId)
+{
+	var nbResults;
+	
+	
+	nbResults=0;
+	if(input_case=="")
+	{
+		keyword=keyword.toUpperCase();
+		keyword=enleve_accents(keyword);
+	}
+	for(var i=0;i<lst_event_indi.length;i++)
+	{
+		if(lst_event_indi[i][3]!=TypeId)
+		{
+			continue;
+		}
+		if(input_case=="")
+		{
+			src_liste=(String)(lst_event_indi[i][0]).toUpperCase();
+			src_liste=enleve_accents(src_liste);
+		}
+		else
+		{
+			src_liste=lst_event_indi[i][0];
+		}
+		
+		if((matchRuleShort(src_liste, keyword)==true && input_full_word=="") || (src_liste==keyword && input_full_word=="on"))
+		{
+			if(bFrame==true)
+			{
+				document.write ("<a href='n")
+			}
+			else
+			{
+				document.write ("<a target='_top' href='n")
+			}
+			document.write (lst_event_indi[i][1])
+			document.write (".htm#")
+/*			if(lst_event_indi[i][3]!=null)
+			{
+				document.write (lst_event_indi[i][9])
+				document.write ("I")
+			}*/
+			document.write (lst_event_indi[i][2])
+			document.write ("'>")
+			donneNomPrenom(lst_event_indi[i][4]);
+			document.write ("</a> : ")
+			displaySource(lst_event_indi[i][0])
+			document.write ("<br />")
+			nbResults++
+		}
+	}
+	return nbResults
+}
+
+function recherche2(keyword, liste)
+{
+	var nbResults;
+	
+	
+	nbResults=0;
+	if(input_case=="")
+	{
+		keyword=keyword.toUpperCase();
+		keyword=enleve_accents(keyword);
+	}
+	for(var i=0;i<liste.length;i++)
+	{
+		if(input_case=="")
+		{
+			src_liste=liste[i][0].toUpperCase();
+			src_liste=enleve_accents(src_liste);
+		}
+		else
+		{
+			src_liste=liste[i][0];
+		}
+		if(input_full_word=="on")
+		{
+			if(src_liste!=keyword)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			if(matchRuleShort(src_liste, keyword)==false)
+			{
+				continue;
+			}
+		}
+		if(bFrame==true)
+		{
+			document.write ("<a href='n")
+		}
+		else
+		{
+			document.write ("<a target='_top' href='n")
+		}
+		document.write (liste[i][1])
+		document.write (".htm#")
+		if(liste[i][3]!=null)
+		{
+			document.write (liste[i][3])
+			document.write ("I")
+		}
+		document.write (liste[i][2])
+		document.write ("'>")
+		donneNomPrenom(liste[i][2]);
+		document.write ("</a> : ")
+		displaySource(liste[i][0])
+		document.write ("<br />")
+		nbResults++
+	}
+	return nbResults
+}
+
+function recherche(keyword, liste, liste_ref, list_link, list_obj)
+{
+	var nbResults;
+	var liste_trouve=[]
+	var objEvent = { year:null, month:null, day:null, place:null, type:""};
+	
+	
+	nbResults=0;
+	for(var i=0;i<liste.length;i++)
+	{
+//		if(input_case=="")
+//		{
+//			liste[i]=liste[i].toUpperCase();
+//			liste[i]=enleve_accents(liste[i]);
+//		}
+		if((matchRuleShort(liste[i], keyword)==true && input_full_word=="")
+			|| (liste[i]==keyword && input_full_word=="on"))
+		{
+			if(liste_ref.length-1==i)
+			{
+				dernier=liste_ref[i]+1;
+			}
+			else
+			{
+				dernier=liste_ref[i+1];
+			}
+			for(var i2=liste_ref[i];i2<dernier;i2++)
+			{
+				for(var i3=0;i3<liste_trouve.length;i3++)
+				{
+					if(liste_trouve[i3]==list_link[i2])
+					{
+						break;
+					}
+				}
+				if(i3<liste_trouve.length)
+				{
+					continue;
+				}
+				if(list_individuals==list_obj)
+				{
+					arrayofStrings=list_obj[list_link[i2]].split("|")
+					if(bFrame==true)
+					{
+						document.write ("<a href='n")
+					}
+					else
+					{
+						document.write ("<a target='_top' href='n")
+					}
+					document.write (arrayofStrings[0])
+					document.write (".htm#")
+					if(arrayofStrings[1].length>0)
+					{
+						document.write (arrayofStrings[1])
+						document.write ("I")
+					}
+					document.write (arrayofStrings[2])
+					document.write ("'>")
+					document.write (arrayofStrings[3])
+					GetBirthDate(arrayofStrings[2], objEvent);
+					document.write (" " + GetDate(objEvent) + " - ");
+					GetDeathDate(arrayofStrings[2], objEvent);
+					document.write (" " + GetDate(objEvent));
+				}
+				else
+				{
+					arrayofStrings=list_obj[list_link[i2]].split("|")
+					if(bFrame==true)
+					{
+						document.write ("<a href='evp")
+					}
+					else
+					{
+						document.write ("<a target='_top' href='evp")
+					}
+					document.write (arrayofStrings[0])
+					document.write (".htm#")
+					document.write (arrayofStrings[1])
+					document.write ("'>")
+					document.write (arrayofStrings[2])
+				}
+				document.write ("</a>")
+				document.write ("<br />")
+				nbResults++
+				liste_trouve[nbResults]=list_link[i2]
+			}
+		}
+	}
+	return nbResults
+}
+
+function enleve_accents(sWord)
+{
+	sRes="";
+	
+	for(i=0;i<sWord.length;i++)
+	{
+		switch(sWord.substring(i,i+1))
+		{
+			case "È":
+			case "É":
+			case "Ê":
+			case "Ë":
+				sRes=sRes+"E";
+				break;
+
+			case "À":
+			case "Â":
+			case "Å":
+			case "Ä":
+			case "Á":
+			case "Ã":
+				sRes=sRes+"A";
+				break;
+
+			case "Ô":
+			case "Ö":
+			case "Ó":
+			case "Õ":
+				sRes=sRes+"O";
+				break;
+
+			case "Ç":
+				sRes=sRes+"C";
+				break;
+
+			case "Î":
+			case "Ï":
+			case "Í":
+				sRes=sRes+"I";
+				break;
+
+			case "Û":
+			case "Ü":
+			case "Ù":
+			case "Ú":
+				sRes=sRes+"U";
+				break;
+
+			case "Ñ":
+				sRes=sRes+"N";
+				break;
+
+			case "ß":
+				sRes=sRes+"S";
+				break;
+
+			default:
+				sRes=sRes+sWord.substring(i,i+1);
+		}
+	}
+	return sRes;
+}
+//-->
+</script>
+	<p><a href="index.htm" target="_top">Retour à la page d'accueil</a></p>Ces pages ont été fabriquées avec le logiciel Oxy-Gen version 1.40t, le 23/05/2022. <a href="http://www.oxy-gen-soft.net/">Vous pouvez le télécharger sur ce site</a>.</body></html>
